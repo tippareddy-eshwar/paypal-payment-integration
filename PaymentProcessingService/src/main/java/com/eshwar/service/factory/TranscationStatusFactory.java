@@ -32,21 +32,27 @@ public class TranscationStatusFactory
 		 {
 		    
 		    case "CREATED" :
+		    	             //Dependency Look Up
 		    	      return context.getBean(CreatedStatusProcessorService.class);
 		    	         
 		    case "INITIATED" :
+		    	             //Dependency Look Up
    	                  return context.getBean(InitiatedStatusProcessorService.class);
    	                  
 		    case "PENDING" :
+		    	      //Dependency Look Up
    	                  return context.getBean(PendingStatusProcessorService.class);
    	                  
 		    case "APPROVED" :
+		    	      //Dependency Look Up
    	                  return context.getBean(ApprovedStatusProcessorService.class);
    	                  
 		    case "SUCCESS" :
+		    	      //Dependency Look Up
    	                  return context.getBean(SuccessStatusProcessorService.class);
    	                  
 		    case "FAILED" :
+		    	        //Dependency Look Up
    	                  return context.getBean(FailedStatusProcessorService.class);
    	                  
    	        default :

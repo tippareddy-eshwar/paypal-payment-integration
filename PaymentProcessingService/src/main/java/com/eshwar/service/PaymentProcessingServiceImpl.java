@@ -17,10 +17,10 @@ public class PaymentProcessingServiceImpl implements IPaymentProcessingService
      {
     	   log.info("PaymentProcessingServiceImpl Class createPayment() is executed...");
     	   //String status="CREATED";
-    	   //String status="INITIATED";
+    	   String status="INITIATED";
     	   //String status="PENDING";
     	   //String status="APPROVED";
-    	   String status="SUCCESS";
+    	   //String status="SUCCESS";
     	   //String status="FAILED";
     	   //String status="UNDER-REVIEW";
     	   //calling the PaymentStatus Service Class processStatus Class
