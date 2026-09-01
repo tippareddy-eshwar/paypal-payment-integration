@@ -30,7 +30,7 @@ public class PaymentProcessingController
      }
 	 
 	 @PostMapping("/{paymentId}/initiate") //method path (or) method request path
-     public ResponseEntity<String> initiatePayment(@PathVariable Integer paymentId)
+     public ResponseEntity<String> initiatePayment(@PathVariable("paymentId") Integer paymentId)
      {
     	 log.info("PaymentProcessingController Class initiatePayment() method is executed...");
     	 //returning ResponseEntity Class Object
@@ -39,7 +39,7 @@ public class PaymentProcessingController
      }
 	 
 	 @PostMapping("/{paymentId}/capture") //method path (or) method request path
-     public ResponseEntity<String> capturePayment(@PathVariable Integer paymentId)
+     public ResponseEntity<String> capturePayment(@PathVariable("paymentId") Integer paymentId)
      {
     	 log.info("PaymentProcessingController Class capturePayment() method is executed...");
     	 //returning ResponseEntity Class Object
