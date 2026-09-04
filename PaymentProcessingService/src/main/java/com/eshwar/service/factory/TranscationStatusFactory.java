@@ -20,43 +20,43 @@ public class TranscationStatusFactory
 
 	 private final ApplicationContext context;
 	 
-	 public ITranscationStatusProcessor getStatusProcessor(String paymentStatus)
+	 public ITranscationStatusProcessor getStatusProcessor(Integer paymentStatusId)
 	 {
-		 log.info("TranscationStatusFactory Class getStatusProcessor(---) method is executed : {} ",paymentStatus);
-		 if(paymentStatus==null)
+		 log.info("TranscationStatusFactory Class getStatusProcessor(---) method is executed, paymentStatusId {} ",paymentStatusId);
+		 if(paymentStatusId==null)
 		 {
 			 throw new IllegalArgumentException("Payment Status Cannot Be Empty...");
 		 }
 		 
-		 switch(paymentStatus.toUpperCase().trim())
+		 switch(paymentStatusId)
 		 {
 		    
-		    case "CREATED" :
+		    case 1 :
 		    	             //Dependency Look Up
 		    	      return context.getBean(CreatedStatusProcessorService.class);
 		    	         
-		    case "INITIATED" :
+		    case 2 :
 		    	             //Dependency Look Up
    	                  return context.getBean(InitiatedStatusProcessorService.class);
    	                  
-		    case "PENDING" :
+		    case 3 :
 		    	      //Dependency Look Up
    	                  return context.getBean(PendingStatusProcessorService.class);
    	                  
-		    case "APPROVED" :
+		    case 4 :
 		    	      //Dependency Look Up
    	                  return context.getBean(ApprovedStatusProcessorService.class);
    	                  
-		    case "SUCCESS" :
+		    case 5 :
 		    	      //Dependency Look Up
    	                  return context.getBean(SuccessStatusProcessorService.class);
    	                  
-		    case "FAILED" :
+		    case 6 :
 		    	        //Dependency Look Up
    	                  return context.getBean(FailedStatusProcessorService.class);
    	                  
    	        default :
-   	        	      throw new IllegalArgumentException("Invalid Payment Status : "+paymentStatus);
+   	        	      throw new IllegalArgumentException("Invalid Payment Status : "+paymentStatusId);
    	         
    	            
    	   }

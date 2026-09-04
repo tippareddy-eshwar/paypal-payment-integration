@@ -3,8 +3,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.eshwar.pojo.CreateTranscationRequest;
 import com.eshwar.service.IPaymentProcessingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,11 +21,13 @@ public class PaymentProcessingController
 	 private final IPaymentProcessingService paymentProcessingService;
 	 
 	 @PostMapping //method path (or) method request path
-     public ResponseEntity<String> createPayment()
+     public ResponseEntity<String> createPayment(@RequestBody CreateTranscationRequest createTranscationRequest)
      {
-    	 log.info(" PaymentProcessingController Class createPayment() method is executed...");
+    	
+		 log.info(" PaymentProcessingController Class createPayment() method is executed, createTranscationRequest : {} ",createTranscationRequest);
     	 //calling the PaymentProcessingService Class createPayment() method
-    	 String response = paymentProcessingService.createPayment();
+    	 String response = paymentProcessingService.createPayment(createTranscationRequest);
+    	 log.info("Response from the PaymentProcessingService Class is response: {}",response);
     	 //returning ResponseEntity Class Object
     	 return new ResponseEntity<String>(response,HttpStatus.CREATED);
     	 //return ResponseEntity.status(HttpStatus.CREATED).body(response);//builder design pattern
