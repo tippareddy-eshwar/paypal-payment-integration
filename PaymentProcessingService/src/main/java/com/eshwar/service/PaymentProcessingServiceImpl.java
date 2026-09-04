@@ -1,6 +1,7 @@
 //PaymentProcessingServiceImpl.java(implemented class of IPaymentProcessingService interface)
 package com.eshwar.service;
 import java.util.UUID;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import com.eshwar.dto.TranscationDTO;
 import com.eshwar.pojo.CreateTranscationRequest;
@@ -14,6 +15,8 @@ public class PaymentProcessingServiceImpl implements IPaymentProcessingService
 {
 	
 	 private final PaymentStatusService paymentStatusService;
+	 
+	 private final ModelMapper modelMapper;
 	
 	
 	public String createPayment(CreateTranscationRequest createTranscationRequest)
@@ -21,6 +24,7 @@ public class PaymentProcessingServiceImpl implements IPaymentProcessingService
     	   
 		   log.info("PaymentProcessingServiceImpl Class createPayment() is executed , createTranscationRequest : {} ",createTranscationRequest);
 		   TranscationDTO transcationDTO = prepareTranscationDTOFromRequest(createTranscationRequest);
+		   log.info("TranscationDTO Object is prepared from CreateTranscationRequest Object , transactionDTO : {}",transcationDTO);
 		   transcationDTO.setTxnStatusId(1);//CREATED
 		   
 		   //calling the generateUniqueTransactionReference() method to generate unique transaction reference
@@ -40,7 +44,9 @@ public class PaymentProcessingServiceImpl implements IPaymentProcessingService
 		 return UUID.randomUUID().toString();
 	 }
 	 
-	 private TranscationDTO prepareTranscationDTOFromRequest(CreateTranscationRequest createTranscationRequest) 
+	 
+
+	 /*private TranscationDTO prepareTranscationDTOFromRequest(CreateTranscationRequest createTranscationRequest) 
 	 {
 		 
 		 log.info("PaymentProcessingServiceImpl Class  prepareTranscationDTOFromRequest(---`) method is executed , createTranscationRequest : {}",createTranscationRequest);
@@ -56,6 +62,16 @@ public class PaymentProcessingServiceImpl implements IPaymentProcessingService
 		
 		 //returning the transcationDTO object
 		 return transcationDTO;
+	 }*/
+	 
+	 private TranscationDTO prepareTranscationDTOFromRequest(CreateTranscationRequest createTranscationRequest) 
+	 {
+		 
+		 log.info("PaymentProcessingServiceImpl Class  prepareTranscationDTOFromRequest(---) method is executed , createTranscationRequest : {}",createTranscationRequest);
+		 return modelMapper.map(createTranscationRequest, TranscationDTO.class);
+	 
 	 }
 	 
+	 
+    
 }
