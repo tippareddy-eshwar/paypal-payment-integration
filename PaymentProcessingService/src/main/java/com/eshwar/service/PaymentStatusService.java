@@ -1,6 +1,8 @@
 //PaymentStatusService.java(This class is deals with all status processing)
 package com.eshwar.service;
 import org.springframework.stereotype.Service;
+
+import com.eshwar.constants.TransactionStatusEnum;
 import com.eshwar.dto.TranscationDTO;
 import com.eshwar.service.factory.TranscationStatusFactory;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +20,8 @@ public class PaymentStatusService
      {
     	 log.info("PaymentStatusService Class processStatus(---) method is executed, transcationDTO {}: ", transcationDTO);
     	 
-    	 ITranscationStatusProcessor statusProcessor = factory.getStatusProcessor(transcationDTO.getTxnStatusId());
+    	 TransactionStatusEnum enumObject = TransactionStatusEnum.getByName(transcationDTO.getTxnStatus());
+    	 ITranscationStatusProcessor statusProcessor = factory.getStatusProcessor(enumObject);
     	 //calling the processStatus() method
     	 TranscationDTO responseDTO = statusProcessor.processStatus(transcationDTO);
     	 

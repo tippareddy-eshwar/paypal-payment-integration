@@ -10,10 +10,10 @@ public class TranscationDTO
    
 	private Integer id;
     private String userId;
-    private Integer paymentMethodId;
-    private Integer providerId;
-    private Integer paymentTypeId;
-    private Integer txnStatusId;
+    private String paymentMethod;
+    private String provider;
+    private String paymentType;
+    private String txnStatus;
     private BigDecimal amount;
     private String currency;
     private String merchantTransactionReference;

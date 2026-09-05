@@ -8,9 +8,9 @@ public class CreateTranscationRequest
 {
 	
 	private String userId;
-    private Integer paymentMethodId;
-    private Integer providerId;
-    private Integer paymentTypeId;
+    private String paymentMethod;
+    private String provider;
+    private String paymentType;
     private BigDecimal amount;
     private String currency;
     private String merchantTransactionReference;

@@ -1,14 +1,13 @@
 //PaymentProcessingServiceImpl.java(implemented class of IPaymentProcessingService interface)
 package com.eshwar.service;
 import java.util.UUID;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import com.eshwar.constants.TransactionStatusEnum;
 import com.eshwar.dto.TranscationDTO;
 import com.eshwar.pojo.CreatePaymentResponse;
 import com.eshwar.pojo.CreateTranscationRequest;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,7 +28,7 @@ public class PaymentProcessingServiceImpl implements IPaymentProcessingService
 		   log.info("PaymentProcessingServiceImpl Class createPayment() is executed , createTranscationRequest : {} ",createTranscationRequest);
 		   TranscationDTO transcationDTO = prepareTranscationDTOFromRequest(createTranscationRequest);
 		   log.info("TranscationDTO Object is prepared from CreateTranscationRequest Object , transactionDTO : {}",transcationDTO);
-		   transcationDTO.setTxnStatusId(1);//CREATED
+		   transcationDTO.setTxnStatus(TransactionStatusEnum.CREATED.getName());//CREATED
 		   
 		   //calling the generateUniqueTransactionReference() method to generate unique transaction reference
 		   String uniqueTransactionReference = generateUniqueTransactionReference();
@@ -47,7 +46,7 @@ public class PaymentProcessingServiceImpl implements IPaymentProcessingService
     		   
     		   //mapping TranscationDTO into CreatePaymentResponse 
     		   createPaymentResponse.setTxnReference(response.getTxnReference());
-    		   createPaymentResponse.setTxnStatusId(response.getTxnStatusId());
+    		   createPaymentResponse.setTxnStatus(response.getTxnStatus());
     	   }
     	   
     	   

@@ -2,6 +2,8 @@
 package com.eshwar.service.factory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
+
+import com.eshwar.constants.TransactionStatusEnum;
 import com.eshwar.service.ApprovedStatusProcessorService;
 import com.eshwar.service.CreatedStatusProcessorService;
 import com.eshwar.service.FailedStatusProcessorService;
@@ -20,43 +22,45 @@ public class TranscationStatusFactory
 
 	 private final ApplicationContext context;
 	 
-	 public ITranscationStatusProcessor getStatusProcessor(Integer paymentStatusId)
+	 public ITranscationStatusProcessor getStatusProcessor(TransactionStatusEnum enumObject)
 	 {
-		 log.info("TranscationStatusFactory Class getStatusProcessor(---) method is executed, paymentStatusId {} ",paymentStatusId);
-		 if(paymentStatusId==null)
+		 log.info("TranscationStatusFactory Class getStatusProcessor(---) method is executed, enumObject : {} ",enumObject);
+		 
+		 if(enumObject==null)
 		 {
 			 throw new IllegalArgumentException("Payment Status Cannot Be Empty...");
 		 }
 		 
-		 switch(paymentStatusId)
+		 
+		 switch(enumObject)
 		 {
 		    
-		    case 1 :
+		    case CREATED :
 		    	             //Dependency Look Up
 		    	      return context.getBean(CreatedStatusProcessorService.class);
 		    	         
-		    case 2 :
+		    case INITIATED :
 		    	             //Dependency Look Up
    	                  return context.getBean(InitiatedStatusProcessorService.class);
    	                  
-		    case 3 :
+		    case PENDING :
 		    	      //Dependency Look Up
    	                  return context.getBean(PendingStatusProcessorService.class);
    	                  
-		    case 4 :
+		    case  APPROVED :
 		    	      //Dependency Look Up
-   	                  return context.getBean(ApprovedStatusProcessorService.class);
+   	                 return context.getBean(ApprovedStatusProcessorService.class);
    	                  
-		    case 5 :
+		    case SUCCESS :
 		    	      //Dependency Look Up
    	                  return context.getBean(SuccessStatusProcessorService.class);
    	                  
-		    case 6 :
+		    case FAILED :
 		    	        //Dependency Look Up
    	                  return context.getBean(FailedStatusProcessorService.class);
    	                  
    	        default :
-   	        	      throw new IllegalArgumentException("Invalid Payment Status : "+paymentStatusId);
+   	        	      throw new IllegalArgumentException("Invalid Payment Status : "+enumObject);
    	         
    	            
    	   }
