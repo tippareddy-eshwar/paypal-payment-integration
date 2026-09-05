@@ -9,11 +9,11 @@ public class InitiatedStatusProcessorService implements ITranscationStatusProces
 {
 
 	@Override
-	public String processStatus(TranscationDTO transcationDTO) 
+	public TranscationDTO  processStatus(TranscationDTO transcationDTO) 
 	{
 		
-		log.info("InitiatedStatusProcessorService Class processStatus() method is executed , TranscationDTO : {}",transcationDTO);
-		return "Transcation Statuse - INITIATED";
+		log.info("InitiatedStatusProcessorService Class processStatus(---) method is executed , TranscationDTO : {}",transcationDTO);
+		return  transcationDTO;
 	}
 
 }

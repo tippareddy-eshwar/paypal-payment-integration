@@ -10,10 +10,10 @@ public class FailedStatusProcessorService implements ITranscationStatusProcessor
 {
 
 	@Override
-	public String processStatus(TranscationDTO transcationDTO) 
+	public TranscationDTO  processStatus(TranscationDTO transcationDTO) 
 	{
-		log.info("FailedStatusProcessorService Class processStatus() method is executed , transcationDTO : {}", transcationDTO);
-		return "Transcation Statuse - FAILED";
+		log.info("FailedStatusProcessorService Class processStatus(---) method is executed , transcationDTO : {}", transcationDTO);
+		return transcationDTO;
 	}
 
 }

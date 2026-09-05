@@ -14,15 +14,15 @@ public class PaymentStatusService
 	
 	 private final TranscationStatusFactory factory;
 	 
-     public String processStatus( TranscationDTO transcationDTO)
+     public TranscationDTO processStatus(TranscationDTO transcationDTO)
      {
     	 log.info("PaymentStatusService Class processStatus(---) method is executed, transcationDTO {}: ", transcationDTO);
     	 
     	 ITranscationStatusProcessor statusProcessor = factory.getStatusProcessor(transcationDTO.getTxnStatusId());
     	 //calling the processStatus() method
-    	 String processStatus = statusProcessor.processStatus( transcationDTO);
+    	 TranscationDTO responseDTO = statusProcessor.processStatus(transcationDTO);
     	 
-    	 log.info("Response From : {} ",processStatus.getClass().getSimpleName());
-    	 return "From PaymentStatusService Class processStatus(---) method "+processStatus;
+    	 log.info("Response From ITransactionStatusProcessor implemented classes : {} ",responseDTO.getClass().getSimpleName());
+    	 return responseDTO; 
      }
 }

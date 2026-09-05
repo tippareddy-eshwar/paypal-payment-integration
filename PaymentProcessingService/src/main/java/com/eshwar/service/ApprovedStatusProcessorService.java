@@ -10,10 +10,10 @@ public class ApprovedStatusProcessorService implements ITranscationStatusProcess
 {
 
 	@Override
-	public String processStatus(TranscationDTO transcationDTO)
+	public TranscationDTO  processStatus(TranscationDTO transcationDTO)
 	{
-		log.info("ApprovedStatusProcessorService Class processStatus() method is executed , transcationDTO : {}", transcationDTO);
-		return "Transcation Statuse - APPROVED";
+		log.info("ApprovedStatusProcessorService Class processStatus(---) method is executed , transcationDTO : {}", transcationDTO);
+		return transcationDTO;
 	}
 
 }

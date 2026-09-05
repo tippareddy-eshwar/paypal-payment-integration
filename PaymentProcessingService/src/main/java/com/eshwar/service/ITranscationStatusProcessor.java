@@ -4,5 +4,5 @@ import com.eshwar.dto.TranscationDTO;
 
 public interface ITranscationStatusProcessor 
 {
-      public String processStatus(TranscationDTO transcationDTO);
+      public TranscationDTO processStatus(TranscationDTO transcationDTO);
 }

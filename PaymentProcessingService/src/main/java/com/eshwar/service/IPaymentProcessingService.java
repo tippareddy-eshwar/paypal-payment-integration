@@ -1,9 +1,10 @@
 //IPaymentProcessingService .java
 package com.eshwar.service;
+import com.eshwar.pojo.CreatePaymentResponse;
 import com.eshwar.pojo.CreateTranscationRequest;
 
 public interface IPaymentProcessingService 
 {
 	
-    public String createPayment(CreateTranscationRequest createTranscationRequest);
+    public CreatePaymentResponse  createPayment(CreateTranscationRequest createTranscationRequest);
 }

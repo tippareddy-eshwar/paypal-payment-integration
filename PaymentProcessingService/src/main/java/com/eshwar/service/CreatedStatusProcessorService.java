@@ -20,15 +20,17 @@ public class CreatedStatusProcessorService implements ITranscationStatusProcesso
 	private final ITransactionRepository transactionRepository;
 
 	@Override
-	public String processStatus(TranscationDTO transcationDTO) 
+	public TranscationDTO processStatus(TranscationDTO transcationDTO) 
 	{
-		log.info("CreatedStatusProcessor Class processStatus() method is executed, transcationDTO : {}", transcationDTO);
+		log.info("CreatedStatusProcessor Class processStatus(---) method is executed, transcationDTO : {}", transcationDTO);
 		//converting DTO into Entity using Model Mapper and pass to the repository layer to save into the database 
 		Transaction entity = modelMapper.map(transcationDTO,Transaction.class);
 		log.info("Converted TranscationDTO Object into Transaction Entity Object, entity : {}",entity);
-		int transaction = transactionRepository.createTransaction(entity);
-		log.info("Transaction is created in the database, transaction : {}", transaction);
-		return "Transcation Statuse - CREATED";
+		int transactionId = transactionRepository.createTransaction(entity);
+		log.info("Transaction is created in the database, transactionId : {}", transactionId);
+		//setting the generated primary key into the DTO object and return to the service layer
+		transcationDTO.setId(transactionId);
+		return transcationDTO;
 	}
 
 }

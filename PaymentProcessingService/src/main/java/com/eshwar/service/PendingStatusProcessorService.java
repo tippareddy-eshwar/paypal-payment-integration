@@ -10,10 +10,10 @@ public class PendingStatusProcessorService implements ITranscationStatusProcesso
 {
 
 	@Override
-	public String processStatus(TranscationDTO transcationDTO) 
+	public TranscationDTO  processStatus(TranscationDTO transcationDTO) 
 	{
-		log.info("PendingStatusProcessorService Class processStatus() method is executed , transcationDTO : {}", transcationDTO);
-		return "Transcation Statuse - PENDING";
+		log.info("PendingStatusProcessorService Class processStatus(---) method is executed , transcationDTO : {}", transcationDTO);
+		return transcationDTO;
 	}
 
 }
