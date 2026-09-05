@@ -1,6 +1,6 @@
 // TransactionManagementImpl.java(implemented class for the ITransactionRepository interface)
 package com.eshwar.repository;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -56,7 +56,7 @@ public class TransactionManagementImpl implements ITransactionRepository
 	            )
 	            """;
 		 
-		 //MapSqlParameterSource is one of Spring's standard implementations for supplying named parameter values.
+		/* //MapSqlParameterSource is one of Spring's standard implementations for supplying named parameter values.
          MapSqlParameterSource parameters = new MapSqlParameterSource();
          parameters.addValue("userId",transaction.getUserId());
          parameters.addValue("paymentMethodId", transaction.getPaymentMethodId());
@@ -70,13 +70,17 @@ public class TransactionManagementImpl implements ITransactionRepository
          parameters.addValue("providerReference", transaction.getProviderReference());
          parameters.addValue("errorCode", transaction.getErrorCode());
          parameters.addValue("errorMessage", transaction.getErrorMessage());
-         parameters.addValue("retryCount", transaction.getRetryCount()!=null?transaction.getRetryCount() : 0);
+         parameters.addValue("retryCount", transaction.getRetryCount()!=null?transaction.getRetryCount() : 0);*/
+		
+		//It will reads the properties of the given bean and maps them to the corresponding named parameters in the SQL statement. This allows you to pass an entire object (in this case, the transaction object) and have its properties automatically mapped to the named parameters in the SQL query.
+		BeanPropertySqlParameterSource parameters = new BeanPropertySqlParameterSource(transaction);
          
          
          KeyHolder keyHolder = new GeneratedKeyHolder();
          
          try
          {
+        	 //this method will actually execute the query and insert the record into a database., with out this method we will not be able to insert the record into the database
         	 jdbcTemplate.update(sql, parameters, keyHolder);
 			 Number generatedId = keyHolder.getKey();
 			 
