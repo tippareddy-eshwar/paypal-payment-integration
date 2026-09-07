@@ -18,7 +18,8 @@ public enum TransactionStatusEnum
 
 	TransactionStatusEnum(Integer id,String name) 
 	 {
-	        
+	      
+		 
 	        this.id = id;
 	        this.name = name;
 	}
@@ -27,6 +28,7 @@ public enum TransactionStatusEnum
     public static TransactionStatusEnum getById(Integer id)
     {
 
+    	//TransactionStatusEnum.values() method will returns all enum constants:
         for (TransactionStatusEnum status : TransactionStatusEnum.values()) 
         {
 

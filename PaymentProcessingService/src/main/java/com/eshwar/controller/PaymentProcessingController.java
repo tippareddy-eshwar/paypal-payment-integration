@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.eshwar.pojo.CreatePaymentResponse;
 import com.eshwar.pojo.CreateTranscationRequest;
 import com.eshwar.service.IPaymentProcessingService;
@@ -36,12 +35,12 @@ public class PaymentProcessingController
     	 //return ResponseEntity.status(HttpStatus.CREATED).body(response);//builder design pattern
      }
 	 
-	 @PostMapping("/{paymentId}/initiate") //method path (or) method request path
-     public ResponseEntity<String> initiatePayment(@PathVariable("paymentId") Integer paymentId)
+	 @PostMapping("/{txnReference}/initiate") //method path (or) method request path
+     public ResponseEntity<String> initiatePayment(@PathVariable("txnReference") Integer txnReference)
      {
-    	 log.info("PaymentProcessingController Class initiatePayment() method is executed...");
+    	 log.info("PaymentProcessingController Class initiatePayment() method is executed , txnReference : {} " , txnReference);
     	 //returning ResponseEntity Class Object
-    	 return new ResponseEntity<String>("Payment Initiated Process Started : "+paymentId,HttpStatus.CREATED);
+    	 return new ResponseEntity<String>("Payment Initiated Process Started : "+txnReference,HttpStatus.CREATED);
     	 //return ResponseEntity.status(HttpStatus.CREATED).body(response);//builder design pattern
      }
 	 
