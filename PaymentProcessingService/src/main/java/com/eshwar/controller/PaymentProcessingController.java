@@ -36,20 +36,24 @@ public class PaymentProcessingController
      }
 	 
 	 @PostMapping("/{txnReference}/initiate") //method path (or) method request path
-     public ResponseEntity<String> initiatePayment(@PathVariable("txnReference") Integer txnReference)
+     public ResponseEntity<CreatePaymentResponse> initiatePayment(@PathVariable("txnReference") String txnReference)
      {
     	 log.info("PaymentProcessingController Class initiatePayment() method is executed , txnReference : {} " , txnReference);
+    	 
+    	 //calling the PaymentProcessingService Class initiatePayment(---) method
+    	 CreatePaymentResponse intiatePaymentResponse = paymentProcessingService.intiatePayment(txnReference);
+    	 
     	 //returning ResponseEntity Class Object
-    	 return new ResponseEntity<String>("Payment Initiated Process Started : "+txnReference,HttpStatus.CREATED);
+    	 return new ResponseEntity<CreatePaymentResponse>(intiatePaymentResponse,HttpStatus.OK);
     	 //return ResponseEntity.status(HttpStatus.CREATED).body(response);//builder design pattern
      }
 	 
-	 @PostMapping("/{paymentId}/capture") //method path (or) method request path
-     public ResponseEntity<String> capturePayment(@PathVariable("paymentId") Integer paymentId)
+	 @PostMapping("/{txnReference}/capture") //method path (or) method request path
+     public ResponseEntity<String> capturePayment(@PathVariable("txnReference") String txnReference)
      {
-    	 log.info("PaymentProcessingController Class capturePayment() method is executed...");
+    	 log.info("PaymentProcessingController Class capturePayment() method is executed ,  txnReference : {} " , txnReference);
     	 //returning ResponseEntity Class Object
-    	 return new ResponseEntity<String>("Capture Payment Process Started : "+paymentId,HttpStatus.CREATED);
+    	 return new ResponseEntity<String>("Capture Payment Process Started : "+txnReference, HttpStatus.OK);
     	 //return ResponseEntity.status(HttpStatus.CREATED).body(response);//builder design pattern
      }
 }

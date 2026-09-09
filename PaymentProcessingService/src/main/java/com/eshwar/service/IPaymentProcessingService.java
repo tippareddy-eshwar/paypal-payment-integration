@@ -7,4 +7,8 @@ public interface IPaymentProcessingService
 {
 	
     public CreatePaymentResponse  createPayment(CreateTranscationRequest createTranscationRequest);
+    
+    public CreatePaymentResponse  intiatePayment(String transactionReference);
+    
+    public CreatePaymentResponse  capturePayment(String transactionReference);
 }

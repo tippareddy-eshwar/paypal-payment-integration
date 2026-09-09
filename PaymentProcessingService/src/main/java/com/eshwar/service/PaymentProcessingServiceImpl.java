@@ -6,8 +6,11 @@ import org.springframework.stereotype.Service;
 
 import com.eshwar.constants.TransactionStatusEnum;
 import com.eshwar.dto.TranscationDTO;
+import com.eshwar.entity.Transaction;
 import com.eshwar.pojo.CreatePaymentResponse;
 import com.eshwar.pojo.CreateTranscationRequest;
+import com.eshwar.repository.ITransactionRepository;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,6 +23,8 @@ public class PaymentProcessingServiceImpl implements IPaymentProcessingService
 	 private final PaymentStatusService paymentStatusService;
 	 
 	 private final ModelMapper modelMapper;
+	 
+	 private final  ITransactionRepository transcationRepo;
 	
 	
 	public CreatePaymentResponse  createPayment(CreateTranscationRequest createTranscationRequest)
@@ -37,7 +42,7 @@ public class PaymentProcessingServiceImpl implements IPaymentProcessingService
 		   
     	   //calling the PaymentStatus Service Class processStatus Class
 		   TranscationDTO response = paymentStatusService.processStatus(transcationDTO);
-    	   log.info("Response from the PaymentStatusProcessor Class response : {}",response);
+    	   log.info("Response from the PaymentStatusProcessor Class after processing INITIATED Status, response : {}",response);
     	   
     	   //creating the CreatePaymentResponse Class Object
     	   CreatePaymentResponse createPaymentResponse = new CreatePaymentResponse();
@@ -49,7 +54,7 @@ public class PaymentProcessingServiceImpl implements IPaymentProcessingService
     		   createPaymentResponse.setTxnStatus(response.getTxnStatus());
     	   }
     	   
-    	   
+    	   log.info("Payment Response , createPaymentResponse : {} ",createPaymentResponse);
     	   return createPaymentResponse;
      }
 	 
@@ -86,6 +91,60 @@ public class PaymentProcessingServiceImpl implements IPaymentProcessingService
 		 return modelMapper.map(createTranscationRequest, TranscationDTO.class);
 	 
 	 }
+
+	 @Override
+	 public CreatePaymentResponse intiatePayment(String transactionReference)
+	 {
+		
+		 log.info("PaymentProcessingServiceImpl Class intiatePayment(---) method is executed ,transactionReference : {}",transactionReference);
+		
+		 //calling the getTransactionDetailsByTxnReference(---) method of  ITransactionRepository  interface implemented class
+		 Transaction transactionEntity = transcationRepo.getTransactionDetailsByTxnReference(transactionReference);
+		 
+		 log.info("TransactionManagementImpl Class getTransactionDetailsByTxnReference(---) is returning , transactionEntity : {} ", transactionEntity);
+		 
+		 //using and Converters and Model Mapper  for Converting Entity into DTo
+		 TranscationDTO transactionDTo = modelMapper.map(transactionEntity,TranscationDTO.class);
+		 log.info("From Entity to DTO , transactionDTo : {} ",transactionDTo);
+		 
+		 transactionDTo.setTxnStatus(TransactionStatusEnum.INITIATED.getName());
+		 
+		 //calling the PaymentStatus Service Class processStatus Class
+		 TranscationDTO response = paymentStatusService.processStatus(transactionDTo);
+		 log.info("Response from the PaymentStatusProcessor Class after processing INITIATED Status , response : {}",response);
+		 
+		 
+		   //we need to call PayPal APIs(TO DO)
+		 
+		     transactionDTo.setTxnStatus(TransactionStatusEnum.PENDING.getName());
+		     transactionDTo.setProviderReference("PayPalOrder12345");//dummy value
+		     
+		     
+			//calling the PaymentStatus Service Class processStatus Class
+			  response = paymentStatusService.processStatus(transactionDTo);
+			 log.info("Response from the PaymentStatusProcessor Class after processing PENDING Status , response : {}",response);
+		 
+		 
+		 //returning PaymentResponse Class Object
+		 CreatePaymentResponse paymentResponse=new CreatePaymentResponse();
+		 
+		 paymentResponse.setTxnReference(response.getTxnReference());
+		 paymentResponse.setTxnStatus(response.getTxnStatus());
+		 
+		 log.info("Payment Response , paymentResponse : {} ",paymentResponse);
+		 
+		 return paymentResponse;
+	 }
+
+	 @Override
+	 public CreatePaymentResponse capturePayment(String transactionReference)
+	 {
+		
+		 log.info("PaymentProcessingServiceImpl Class capturePayment(---) method is executed ,transactionReference : {}",transactionReference);
+			//returning PaymentResponse Class Object(As of now Dummy Response Class Object is returning)
+		return null;
+	 }
+	 
 	 
 	 
     

@@ -8,8 +8,8 @@ public enum TransactionStatusEnum
 	
 	CREATED(1,"CREATED"),//Enum Constant
 	INITIATED(2,"INITIATED"),//Enum Constant
-	APPROVED(3,"APPROVED"),//Enum Constant
-	PENDING(4,"PENDING"),//Enum Constant
+	PENDING(3,"PENDING"),//Enum Constant
+	APPROVED(4,"APPROVED"),//Enum Constant
 	SUCCESS(5,"SUCCESS"),//Enum Constant
 	FAILED(6,"FAILED");//Enum Constant
 	

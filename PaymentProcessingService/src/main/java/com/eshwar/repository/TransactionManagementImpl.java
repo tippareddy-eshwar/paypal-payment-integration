@@ -1,6 +1,9 @@
 // TransactionManagementImpl.java(implemented class for the ITransactionRepository interface)
 package com.eshwar.repository;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -103,6 +106,123 @@ public class TransactionManagementImpl implements ITransactionRepository
 		 }
 		 
 		return transaction.getId();
+	}
+	
+	
+	@Override
+	public Transaction getTransactionDetailsByTxnReference(String txnReference)
+	{
+		
+		log.info("TransactionManagementImpl Class  getTransactionDetailsByTxnReference(---) method is Executed, txnReference : {} ",txnReference);
+		
+		 final String sql = """
+			        SELECT
+			            id,
+			            user_id,
+			            payment_method_id,
+			            provider_id,
+			            payment_type_id,
+			            txn_status_id,
+			            amount,
+			            currency,
+			            merchant_transaction_reference,
+			            txn_reference,
+			            provider_reference,
+			            error_code,
+			            error_message,
+			            created_at,
+			            updated_at,
+			            retry_count
+			        FROM payments.`transaction`
+			        WHERE txn_reference = :txnReference
+			        """;
+		 
+		 MapSqlParameterSource params= new MapSqlParameterSource();
+		 params.addValue("txnReference", txnReference);
+		 try
+		 {
+			 //queryForObject(---) method is used to Execute the SELECT query and map the result to a Transaction object
+			 return jdbcTemplate.queryForObject(sql , params , new BeanPropertyRowMapper<>(Transaction.class));
+		 }
+		 
+		 //No transaction details found for the given transaction reference
+		 catch(EmptyResultDataAccessException ex)
+		 {
+			 log.info("No transaction found for txnReference : {}", txnReference);
+			 return null;
+		 }
+		 
+		 //Handle unexpected database or runtime exceptions
+		 catch(Exception e)
+		 {
+			 log.error("Error occurred while fetching transaction details for txnReference : {}",txnReference, e );
+			 return null;
+		 }
+		
+	}
+
+
+	@Override
+	public Boolean updateTransactionDetails(Transaction transactionEntity) 
+	{
+		
+		log.info("TransactionManagementImpl Class  updateTransactionDetails(---) method is Executed, transactionEntity : {} ",transactionEntity);
+		
+		if (transactionEntity == null) 
+		{
+
+		    log.warn("Transaction update failed, transaction entity is null , transactionEntity : {} ",transactionEntity) ;
+		    return false;
+		}
+
+		if (transactionEntity.getId() == null) 
+		{
+
+		    log.warn("Transaction update failed, transaction ID is null, transactionEntity : {} ",transactionEntity);
+		    return false;
+		}
+		
+		log.info("Update Transaction Details Called for Id : {} ",transactionEntity.getId());
+		
+		 final String sql = """
+			        UPDATE payments.`transaction` SET
+			            txn_status_id = :txnStatusId,
+			            provider_reference = :providerReference,
+			            error_code = :errorCode,
+			            error_message = :errorMessage,
+			            retry_count = :retryCount
+			        WHERE txn_reference = :txnReference
+			        """;
+		 
+		 BeanPropertySqlParameterSource params=new BeanPropertySqlParameterSource(transactionEntity);
+		 
+		 try
+		 {
+			 //update(---) is used to execute the UPDATE query
+			 int rowsAffected = jdbcTemplate.update(sql,params);
+			 log.info("No.Of Rows are Affected are ,rowsAffected : {} ", rowsAffected);
+			 if(rowsAffected>0)
+			 {
+				 log.info("Transaction details updated successfully for the transaction Id : {}",transactionEntity.getId());
+			     return true;    
+
+			 }
+			 
+			 else
+			 {
+				 log.info("No Transaction details found for the transaction Id : {}",transactionEntity.getId());
+			     return false;    
+
+			 }
+		 }
+		 
+		 catch(Exception e)
+		 {
+			 log.error("Error occurred while updating transaction details for the transaction Id : {}",transactionEntity.getId(),e);
+			 return false;
+		 }
+		
+		
 	}
 
 }
