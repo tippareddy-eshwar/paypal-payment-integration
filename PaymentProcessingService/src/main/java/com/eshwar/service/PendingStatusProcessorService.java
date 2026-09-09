@@ -5,25 +5,25 @@ import org.springframework.stereotype.Service;
 import com.eshwar.dto.TranscationDTO;
 import com.eshwar.entity.Transaction;
 import com.eshwar.repository.ITransactionRepository;
-
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
-@RequiredArgsConstructor
-public class PendingStatusProcessorService implements ITranscationStatusProcessor 
+public class PendingStatusProcessorService extends AbstractTransactionStatusProcessor
 {
 
-	private final ModelMapper modelMapper;
-    private final ITransactionRepository repository;
-    
+	public PendingStatusProcessorService(ModelMapper modelMapper , ITransactionRepository repository)
+	{
+		
+		super(modelMapper,repository);
+		log.info("PendingStatusProcessorService  Class Parameterized Constructor is Executed...");
+    }
     
     
 	@Override
-	public TranscationDTO  processStatus(TranscationDTO transcationDTO) 
+	public TranscationDTO processStatusInternal(TranscationDTO transcationDTO) 
 	{
-		log.info("PendingStatusProcessorService Class processStatus(---) method is executed , transcationDTO : {}", transcationDTO);
+		log.info("PendingStatusProcessorService Class processStatusInternal(---) method is executed , transcationDTO : {}", transcationDTO);
 		//converting DTO into Entity using Model Mapper and pass to the repository layer to save into the database 
 		Transaction transactionEntity = modelMapper.map(transcationDTO, Transaction.class);
 		log.info("DTO into Entity , transactionEntity : {} ",transactionEntity);
@@ -40,5 +40,6 @@ public class PendingStatusProcessorService implements ITranscationStatusProcesso
 		return  transcationDTO;
 		
 	}
+
 
 }

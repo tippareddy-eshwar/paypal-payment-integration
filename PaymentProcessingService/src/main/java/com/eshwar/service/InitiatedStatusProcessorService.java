@@ -4,23 +4,25 @@ import org.springframework.stereotype.Service;
 import com.eshwar.dto.TranscationDTO;
 import com.eshwar.entity.Transaction;
 import com.eshwar.repository.ITransactionRepository;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
-public class InitiatedStatusProcessorService implements ITranscationStatusProcessor 
+public class InitiatedStatusProcessorService extends AbstractTransactionStatusProcessor
 {
 
-    private final ModelMapper modelMapper;
-	private final ITransactionRepository repository;
-	
-	@Override
-	public TranscationDTO  processStatus(TranscationDTO transcationDTO) 
+   public InitiatedStatusProcessorService(ModelMapper modelMapper , ITransactionRepository repository)
 	{
 		
-		log.info("InitiatedStatusProcessorService Class processStatus(---) method is executed , TranscationDTO : {}",transcationDTO);
+		super(modelMapper,repository);
+		log.info("InitiatedStatusProcessorService Class Parameterized Constructor is Executed...");
+	}		
+	
+	@Override
+	public TranscationDTO processStatusInternal(TranscationDTO transcationDTO) 
+	{
+		
+		log.info("InitiatedStatusProcessorService Class processStatusInternal(---) method is executed , TranscationDTO : {}",transcationDTO);
 		//converting DTO into Entity using Model Mapper and pass to the repository layer to save into the database 
 		Transaction transactionEntity = modelMapper.map(transcationDTO, Transaction.class);
 		log.info("DTO into Entity , transactionEntity : {} ",transactionEntity);
@@ -36,5 +38,7 @@ public class InitiatedStatusProcessorService implements ITranscationStatusProces
 		log.info("Successfully Updated the Transaction Details  for the transaction id : {} ",transcationDTO.getId());
 		return  transcationDTO;
 	}
+
+	
 
 }
