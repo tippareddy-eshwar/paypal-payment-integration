@@ -49,11 +49,16 @@ public class PaymentProcessingController
      }
 	 
 	 @PostMapping("/{txnReference}/capture") //method path (or) method request path
-     public ResponseEntity<String> capturePayment(@PathVariable("txnReference") String txnReference)
+     public ResponseEntity<CreatePaymentResponse> capturePayment(@PathVariable("txnReference") String txnReference)
      {
     	 log.info("PaymentProcessingController Class capturePayment() method is executed ,  txnReference : {} " , txnReference);
+    	 
+    	 //calling the capturePayment(---) method of  PaymentProcessingService Class
+    	 CreatePaymentResponse capturePaymentResponse = paymentProcessingService.capturePayment(txnReference);
+    	 
     	 //returning ResponseEntity Class Object
-    	 return new ResponseEntity<String>("Capture Payment Process Started : "+txnReference, HttpStatus.OK);
+    	 return new ResponseEntity<CreatePaymentResponse>(capturePaymentResponse , HttpStatus.OK);
+    	 
     	 //return ResponseEntity.status(HttpStatus.CREATED).body(response);//builder design pattern
      }
 }

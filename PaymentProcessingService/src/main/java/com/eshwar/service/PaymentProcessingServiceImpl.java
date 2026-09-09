@@ -3,14 +3,12 @@ package com.eshwar.service;
 import java.util.UUID;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-
 import com.eshwar.constants.TransactionStatusEnum;
 import com.eshwar.dto.TranscationDTO;
 import com.eshwar.entity.Transaction;
 import com.eshwar.pojo.CreatePaymentResponse;
 import com.eshwar.pojo.CreateTranscationRequest;
 import com.eshwar.repository.ITransactionRepository;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -114,22 +112,24 @@ public class PaymentProcessingServiceImpl implements IPaymentProcessingService
 		 log.info("Response from the PaymentStatusProcessor Class after processing INITIATED Status , response : {}",response);
 		 
 		 
-		   //we need to call PayPal APIs(TO DO)
-		 
-		     transactionDTo.setTxnStatus(TransactionStatusEnum.PENDING.getName());
-		     transactionDTo.setProviderReference("PayPalOrder12345");//dummy value
+		 //we need to call PayPal APIs(TO DO)
+		 String redirectURL="https://paypal.com/checkout?orderId=9UC0417246579104C";
+		 transactionDTo.setProviderReference("PayPalOrder12345");
+		 transactionDTo.setTxnStatus(TransactionStatusEnum.PENDING.getName());
 		     
 		     
-			//calling the PaymentStatus Service Class processStatus Class
-			  response = paymentStatusService.processStatus(transactionDTo);
-			 log.info("Response from the PaymentStatusProcessor Class after processing PENDING Status , response : {}",response);
-		 
-		 
-		 //returning PaymentResponse Class Object
+		 //calling the PaymentStatus Service Class processStatus Class
+	     response = paymentStatusService.processStatus(transactionDTo);
+	     log.info("Response from the PaymentStatusProcessor Class after processing PENDING Status , response : {}",response);
+			 
+			 
+         //returning PaymentResponse Class Object
 		 CreatePaymentResponse paymentResponse=new CreatePaymentResponse();
 		 
 		 paymentResponse.setTxnReference(response.getTxnReference());
 		 paymentResponse.setTxnStatus(response.getTxnStatus());
+		 paymentResponse.setProviderReference(response.getProviderReference());
+		 paymentResponse.setRedirectURL(redirectURL);
 		 
 		 log.info("Payment Response , paymentResponse : {} ",paymentResponse);
 		 
@@ -141,8 +141,42 @@ public class PaymentProcessingServiceImpl implements IPaymentProcessingService
 	 {
 		
 		 log.info("PaymentProcessingServiceImpl Class capturePayment(---) method is executed ,transactionReference : {}",transactionReference);
-			//returning PaymentResponse Class Object(As of now Dummy Response Class Object is returning)
-		return null;
+		
+		 //calling the getTransactionDetailsByTxnReference(---) method of  ITransactionRepository  interface implemented class
+		 Transaction transactionEntity = transcationRepo.getTransactionDetailsByTxnReference(transactionReference);
+		 
+		 log.info("TransactionManagementImpl Class getTransactionDetailsByTxnReference(---) is returning , transactionEntity : {} ", transactionEntity);
+		 
+		 //using and Converters and Model Mapper  for Converting Entity into DTo
+		 TranscationDTO transactionDTo = modelMapper.map(transactionEntity,TranscationDTO.class);
+		 log.info("From Entity to DTO , transactionDTo : {} ",transactionDTo);
+		 
+		 transactionDTo.setTxnStatus(TransactionStatusEnum.APPROVED.getName());
+		 
+		 //calling the PaymentStatus Service Class processStatus Class
+		 TranscationDTO response = paymentStatusService.processStatus(transactionDTo);
+		 log.info("Response from the PaymentStatusProcessor Class after processing APPROVED Status , response : {}",response);
+		 
+		 
+		 //we need to call PayPal  Capture order API(TO DO)
+		 //If Success
+		 transactionDTo.setTxnStatus(TransactionStatusEnum.SUCCESS.getName());
+		     
+		     
+		 //calling the PaymentStatus Service Class processStatus Class
+	     response = paymentStatusService.processStatus(transactionDTo);
+	     log.info("Response from the PaymentStatusProcessor Class after processing SUCCESS Status , response : {}",response);
+			 
+		 
+		 //returning PaymentResponse Class Object
+		 CreatePaymentResponse paymentResponse=new CreatePaymentResponse();
+		 
+		 paymentResponse.setTxnReference(response.getTxnReference());
+		 paymentResponse.setTxnStatus(response.getTxnStatus());
+		
+		 log.info("Payment Response , paymentResponse : {} ",paymentResponse);
+		 
+		 return paymentResponse;
 	 }
 	 
 	 
