@@ -4,6 +4,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestClient;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Configuration
@@ -18,5 +20,13 @@ public class AppConfig
 		  
 		  //Executors.newSingleThreadScheduledExecutor() : It creates a ScheduledExecutorService with one worker thread. And That thread can execute scheduled tasks.
 		  return Executors.newSingleThreadScheduledExecutor();
+	  }
+	  
+	 @Bean
+	 public RestClient restClient()
+	  {
+		  log.info(" AppConfig Class restClient() method is Executed...");
+		  //creates and returns the RestClient Object.
+		  return RestClient.builder().build();
 	  }
 }

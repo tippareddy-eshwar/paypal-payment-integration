@@ -23,11 +23,12 @@ public class PayPalClient
 		String result = tokenService.getAccessToken();
 		
 		log.info("Response From the getAccessToken() method of Token Service Class is : "+result);
-		//make Http call using HttpServiceEngine Class
 		
-		String httpResponse = serviceEngine.makeHttpCall();
-		log.info("Response From the makeHttpCall() method of HttpServiceEngine Class is : "+httpResponse);
-		return httpResponse;
+		
+		//make Http call using HttpServiceEngine Class(To DO)
+		//String httpResponse = serviceEngine.makeHttpCall();
+		//log.info("Response From the makeHttpCall() method of HttpServiceEngine Class is : "+httpResponse);
+		return result;
 				
 	}
 	  
