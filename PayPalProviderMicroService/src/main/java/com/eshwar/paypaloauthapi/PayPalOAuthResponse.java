@@ -1,6 +1,7 @@
 //PayPalOAuthResponse .java
 package com.eshwar.paypaloauthapi;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.Data;
 
 @Data

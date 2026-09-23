@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import com.eshwar.dto.PrepareHttpRequest;
 import com.eshwar.http.HttpServiceEngine;
 import com.eshwar.service.TokenService;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -19,8 +20,9 @@ public class PayPalClient
 	private final TokenService tokenService;
 	private final HttpServiceEngine serviceEngine;
  
-	public String makeCall(PrepareHttpRequest paypalCreateOrderHttpRequest)
+	public ResponseEntity<String> makeCall(PrepareHttpRequest paypalCreateOrderHttpRequest)
 	{
+		
 		log.info("PayPalClient Class makeCall() method is Executed, paypalCreateOrderHttpRequest : {} ",paypalCreateOrderHttpRequest);
 		
 		//get the Access Token for that calling the getAccessToken() method of TokenService Class
@@ -37,12 +39,12 @@ public class PayPalClient
 		}
 		
 		//get the access token and set it to the header as Barer Token
-		headers.setBearerAuth( accessToken);
+		headers.setBearerAuth(accessToken);
 		
 		//make Http call using HttpServiceEngine Class
 		ResponseEntity<String> httpResponse = serviceEngine.makeHttpCall(paypalCreateOrderHttpRequest);
 		log.info("Response From the makeHttpCall() method of HttpServiceEngine Class is, httpResponse : {} ", httpResponse);
-		return httpResponse.getBody();
+		return httpResponse;
 				
 	}
 	  

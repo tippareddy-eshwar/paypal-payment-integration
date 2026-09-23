@@ -13,9 +13,9 @@ import com.eshwar.constants.PayPalOAuthAPIConstants;
 import com.eshwar.dto.PrepareHttpRequest;
 import com.eshwar.http.HttpServiceEngine;
 import com.eshwar.paypaloauthapi.PayPalOAuthResponse;
+import com.eshwar.util.JsonAndJavaObjectUtilty;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import tools.jackson.databind.ObjectMapper;
 
 @Service
 @RequiredArgsConstructor
@@ -25,8 +25,7 @@ public class TokenService
     
 	private final HttpServiceEngine serviceEngine;
 	private final ScheduledExecutorService executorService;
-	private final ObjectMapper mapper;
-	
+	private final JsonAndJavaObjectUtilty jsonAndJavaObjectUtilty ;
 	private static String accessToken;
 	
 	@Value("${paypal.oauth.url}")
@@ -35,8 +34,8 @@ public class TokenService
 	@Value("${paypal.client.id}")
 	private String paypalClientId;
 	
-	@Value("${paypl.secret.id}")
-	private String pypalSecretId;
+	@Value("${paypal.secret.id}")
+	private String paypalSecretId;
 	
 	public String getAccessToken()
 	{
@@ -63,29 +62,18 @@ public class TokenService
 		
 		log.info("Response From HttpServiceEngine Class is , jsonResponse : {} ",jsonResponse);
 		
-		PayPalOAuthResponse javaObj = null;
+		//For converting JSON String into Java Object we are calling jsonToJavaObjectConversion(---,---) method of JsonAndJavaObjectUtilty Class
+		PayPalOAuthResponse payPalOAuthResponseJavaObj = jsonAndJavaObjectUtilty.jsonToJavaObjectConversion(jsonResponse.getBody(),PayPalOAuthResponse.class);
+		log.info("JSON String into PayPalOAuthResponse Java Object Conversion , payPalOAuthResponseJavaObj : {} ",payPalOAuthResponseJavaObj);
 		
-		try
-		{
-		   //converting JSON String into Java Object using Jackson 
-		    javaObj = mapper.readValue(jsonResponse.getBody(),PayPalOAuthResponse.class);
-		    
-		    log.info("JSON String into Java Object Conversion , javaObj : {} ",javaObj);
-		}
 		
-		catch(Exception e)
-		{
-			e.printStackTrace();
-			throw new RuntimeException("Failed to Parse From JSON into Java Object...");
-			
-		}
 		
 		
 	     //what ever we get the access token from the PayPal we are setting to the accessToken instance variable
-		 accessToken = javaObj.getAccessToken();
+		 accessToken = payPalOAuthResponseJavaObj.getAccessToken();
 		
 		 //calling  scheduleExpireTimeOfAccessToken(---) method of Token Service Class
-		 scheduleExpireTimeOfAccessToken(javaObj);
+		 scheduleExpireTimeOfAccessToken(payPalOAuthResponseJavaObj);
 		
 		 log.info("New Access Token is Generated and returning the new Access Token, accessToken : {} ",accessToken);
 		
@@ -117,7 +105,7 @@ public class TokenService
 	{
 		//creating custom Headers Class
 		HttpHeaders customHeaders=new HttpHeaders();
-		customHeaders.setBasicAuth(paypalClientId, pypalSecretId);
+		customHeaders.setBasicAuth(paypalClientId, paypalSecretId);
 		customHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 		
 		MultiValueMap<String, String>multiValueMap=new LinkedMultiValueMap<>();		

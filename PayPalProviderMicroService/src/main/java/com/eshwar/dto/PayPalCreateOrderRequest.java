@@ -1,13 +1,15 @@
 // PayPalCreateOrderRequest.java
 package com.eshwar.dto;
 import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.Builder;
 import lombok.Data;
 
 @Data
 @Builder
-public class PayPalCreateOrderRequest
+public class PayPalCreateOrderRequest //Outer Class
 {
     
 	    private String intent;
@@ -21,7 +23,7 @@ public class PayPalCreateOrderRequest
 
 	    @Data
 	    @Builder
-	    public static class PaymentSource 
+	    public static class PaymentSource //static inner class
 	    {
 
 	        private Paypal paypal;
@@ -30,7 +32,7 @@ public class PayPalCreateOrderRequest
 
 	    @Data
 	    @Builder
-	    public static class Paypal
+	    public static class Paypal ////static inner class
 	    {
 
 	        @JsonProperty("experience_context")
@@ -40,7 +42,7 @@ public class PayPalCreateOrderRequest
 
 	    @Data
 	    @Builder
-	    public static class ExperienceContext 
+	    public static class ExperienceContext //static inner class
 	    {
 
 	        @JsonProperty("payment_method_preference")
@@ -65,7 +67,7 @@ public class PayPalCreateOrderRequest
 
 	    @Data
 	    @Builder
-	    public static class PurchaseUnit
+	    public static class PurchaseUnit //static inner class
 	    {
 
 	        private Amount amount;
@@ -74,7 +76,7 @@ public class PayPalCreateOrderRequest
 
 	    @Data
 	    @Builder
-	    public static class Amount 
+	    public static class Amount //static inner class
 	    {
 
 	        @JsonProperty("currency_code")

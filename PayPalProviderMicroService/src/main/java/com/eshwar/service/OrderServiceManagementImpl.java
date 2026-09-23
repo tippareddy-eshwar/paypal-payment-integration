@@ -1,17 +1,16 @@
 //OrderServiceManagementImpl.java(implemented class of  IOrderServiceManagement interface
 package com.eshwar.service;
-import java.util.List;
-import java.util.UUID;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import com.eshwar.dto.PayPalCreateOrderRequest;
 import com.eshwar.dto.PrepareHttpRequest;
 import com.eshwar.paypalclient.PayPalClient;
+import com.eshwar.paypalcreateorderapi.PayPalCreateOrderResponse;
+import com.eshwar.pojo.CreateOrderRequest;
+import com.eshwar.pojo.CreateOrderResponse;
+import com.eshwar.service.helper.PayPalCreateOrderHelper;
+import com.eshwar.util.JsonAndJavaObjectUtilty;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import tools.jackson.databind.ObjectMapper;
 
 @Service
 @RequiredArgsConstructor
@@ -20,96 +19,49 @@ public class OrderServiceManagementImpl implements IOrderServiceManagement
 {
 
 	private final PayPalClient paypalClient;
-	private final ObjectMapper mapper;
+	private final PayPalCreateOrderHelper createOrderHelper;
+	private final JsonAndJavaObjectUtilty jsonAndJavaObjectUtilty ;
 	
 	@Override
-	public String createOrder() 
+	public CreateOrderResponse createOrder(CreateOrderRequest createOrderRequest) 
 	{
 		
-		log.info("OrderServiceManagementImpl Class createOrder() method is Executed...");
+		      log.info("OrderServiceManagementImpl Class createOrder() method is Executed, createOrderRequest : {} ",createOrderRequest);
 		
-		
-		       //creating custom Headers Class
-				HttpHeaders customHeaders=new HttpHeaders();
-	            
-				customHeaders.add("PayPal-Request-Id", UUID.randomUUID().toString());
-				customHeaders.setContentType(MediaType.APPLICATION_JSON);
-				
-				//PayPalCreateOrderRequest Class Object Creation using Builder Design Pattern and setting some values to those fields
-				PayPalCreateOrderRequest paypalCreateOrderRequestObj =
-				                PayPalCreateOrderRequest.builder()
-				                  .intent("CAPTURE")
-				                    .paymentSource(
-				                        PayPalCreateOrderRequest.PaymentSource.builder()
-				                                .paypal(
-				                                        PayPalCreateOrderRequest.Paypal.builder()
-				                                                .experienceContext(
-				                                                        PayPalCreateOrderRequest.ExperienceContext.builder()
-				                                                                .paymentMethodPreference(
-				                                                                        "IMMEDIATE_PAYMENT_REQUIRED")
-				                                                                .landingPage("LOGIN")
-				                                                                .shippingPreference("NO_SHIPPING")
-				                                                                .userAction("PAY_NOW")
-				                                                                .returnUrl(
-				                                                                        "https://example.com/returnUrl")
-				                                                                .cancelUrl(
-				                                                                        "https://example.com/cancelUrl")
-				                                                                .build()
-				                                                )
-				                                                .build()
-				                                )
-				                                .build()
-				                )
-				                .purchaseUnits(
-				                        List.of(
-				                                PayPalCreateOrderRequest.PurchaseUnit.builder()
-				                                        .amount(
-				                                                PayPalCreateOrderRequest.Amount.builder()
-				                                                        .currencyCode("USD")
-				                                                        .value("1.00")
-				                                                        .build()
-				                                        )
-				                                        .build()
-				                        )
-				                )
-				                .build();
-				
-				log.info("PayPalCreateOrderRequest Class Object Contains , paypalCreateOrderRequestObj : {} ",paypalCreateOrderRequestObj);
-				
-				String jsonStringData=null;
-				
-				try
-				{
-				  //Converting PayPalCreateOrderRequest Class Object into JSON String
-				  jsonStringData= mapper.writeValueAsString(paypalCreateOrderRequestObj);
-				  log.info("Java Object into Json String , jsonStringData : {} ",jsonStringData);
-				} 
-				
-				catch (Exception e)
-				{
-
-				    log.error("Failed to convert PayPalCreateOrderRequest object to JSON", e);
-
-				}
-				
-				
-				//preparing the request and returning the request
-				 PrepareHttpRequest paypalCreateOrderHttpRequest = PrepareHttpRequest.builder()
-						                        .httpMethod(HttpMethod.POST)
-						                           .url("https://api-m.sandbox.paypal.com/v2/checkout/orders")
-						                             .headers(customHeaders)
-						                               .body(jsonStringData)
-						                                 .build();
-		
-				 log.info("Finnal PayPal Create Order Http Request is , paypalCreateOrderHttpRequest : {} ",paypalCreateOrderHttpRequest);
+		      PrepareHttpRequest paypalCreateOrderHttpRequest =createOrderHelper.preparingPayPalCreateOrderRequest(createOrderRequest);
+		      log.info("preparingPayPalCreateOrderRequest(---) method of PayPalCreateOrderHelper Class is returning,  paypalCreateOrderHttpRequest : {} ", paypalCreateOrderHttpRequest);
 				 
-				 //calling makeCall(---) method of PayPalClient Class
+			  //calling makeCall(---) method of PayPalClient Class
 				 
-		         String response = paypalClient. makeCall(paypalCreateOrderHttpRequest);
-		         log.info("Response from the makeCall() method of PayPalClient Class is : {} ",response);
-		         return  response;
+		      ResponseEntity<String> paypalJsonResponse= paypalClient. makeCall(paypalCreateOrderHttpRequest);
+		      log.info("Response from the makeCall() method of PayPalClient Class is, paypalJsonResponse : {} ",paypalJsonResponse);
+		      
+		      //For converting JSON into Java Class Object We are Calling jsonToJavaObjectConversion(---,---) method of JsonAndJavaObjectUtilty Class
+		      PayPalCreateOrderResponse payPalCreateOrderResponseObject = jsonAndJavaObjectUtilty.jsonToJavaObjectConversion(paypalJsonResponse.getBody(), PayPalCreateOrderResponse.class);
+		      log.info("After Converting JSON into PayPalCreateOrderResponse Class Object is ,  payPalCreateOrderResponseObject : {} ", payPalCreateOrderResponseObject);
+		      
+		     
+		      String returnURL = payPalCreateOrderResponseObject.getLinks()
+		                  .stream()
+		                  .filter(link->"payer-action".equals(link.getRel()))
+		                  .map(PayPalCreateOrderResponse.Link::getHref)
+		                  .findFirst()
+		                  .orElse(null);
+		      
+		      
+		      //creating the  CreateOrderResponse Class Object
+		      CreateOrderResponse createOrderResponse=new CreateOrderResponse ();
+		      createOrderResponse.setOrderId(payPalCreateOrderResponseObject.getId());
+		      createOrderResponse.setPaypalStatus(payPalCreateOrderResponseObject.getStatus());
+		      createOrderResponse.setRedirectUrl(returnURL);
+		      
+		      log.info("CreateOrderResponse Class Object , createOrderResponse : {} ",createOrderResponse);
+		                        
+		      
+		      return createOrderResponse;
 	}
-
+	
+	
 	@Override
 	public String captureOrder(String  providerReference) 
 	{
