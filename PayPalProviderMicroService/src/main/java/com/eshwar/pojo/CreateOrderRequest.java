@@ -1,6 +1,5 @@
 package com.eshwar.pojo;
 import java.math.BigDecimal;
-
 import lombok.Data;
 
 @Data

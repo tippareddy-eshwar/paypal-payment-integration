@@ -3,11 +3,9 @@ package com.eshwar.paypalclient;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-
 import com.eshwar.dto.PrepareHttpRequest;
 import com.eshwar.http.HttpServiceEngine;
 import com.eshwar.service.TokenService;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

@@ -56,7 +56,7 @@ public class HttpServiceEngine
 	        log.error("PayPal API returned an error. status={}, responseBody={} ", e.getStatusCode(), e.getResponseBodyAsString());
 	        
 
-		    //if service unavailable (or) Gateway_Time Out then throw this PayPal Provider  exception
+		    //if service unavailable (or) Gateway_Time Out errors comes then throw this PayPal Provider exception
 		    
 	        if (e.getStatusCode() == HttpStatus.SERVICE_UNAVAILABLE) 
 	        {
